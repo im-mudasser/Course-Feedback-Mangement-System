@@ -2,6 +2,7 @@ package project;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -34,7 +35,6 @@ public class CourseFeedbackManagementSystem {
 			} else {
 				System.out.println("Username is wrong");
 			}
-
 			break;
 		case 2:
 			System.out.println("Enter your username");
@@ -59,48 +59,25 @@ public class CourseFeedbackManagementSystem {
 
 	private static boolean loginValidation(String inputStdUserName, String inputStdPassword) {
 		boolean found = false;
-		BufferedReader reader = null;
+		String getuserNameAndPassword = readFromFile(new File("StudentsID.txt"));
+		String line[] = getuserNameAndPassword.split("\\r?\\n");
+		for (int i = 0; i < line.length; i++) {
+			int splitLocation = line[i].indexOf(",");
+			String stdUserName = line[i].substring(0, splitLocation);
+			String stdPassword = line[i].substring(splitLocation + 1);
+			if (inputStdUserName.equals(stdUserName) && inputStdPassword.equals(stdPassword)) {
+				found = true;
+				break;
 
-		try {
-			reader = new BufferedReader(new FileReader("./StudentsID.txt"));
-			String line;
-
-			while ((line = reader.readLine()) != null) {
-				int splitLocation = line.indexOf(",");
-				String stdUserName = line.substring(0, splitLocation);
-				String stdPassword = line.substring(splitLocation + 1);
-				if (inputStdUserName.equals(stdUserName) && inputStdPassword.equals(stdPassword)) {
-					found = true;
-					break;
-
-				} else {
-					found = false;
-					continue;
-				}
-			}
-
-		} catch (
-
-		FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			System.out.println("finally is excuted");
-			if (reader != null) {
-				System.out.println("reader is null now");
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// TODO: handle exception
-					e.printStackTrace();
-				}
+			} else {
+				found = false;
+				continue;
 			}
 
 		}
+
 		return found;
+
 	}
 
 	private static void invalidChoice(int choice) {
@@ -111,6 +88,8 @@ public class CourseFeedbackManagementSystem {
 		Scanner keyboard = new Scanner(System.in);
 		System.out.println("Welcome " + adminUsername);
 		System.out.println("1.Add Student");
+		System.out.println("2.Edit Students");
+		System.out.println("3.Delete Students");
 		int choice = keyboard.nextInt();
 		switch (choice) {
 		case 1:
@@ -131,11 +110,130 @@ public class CourseFeedbackManagementSystem {
 				System.out.println("Do you want to enter more students y/n");
 
 			} while (keyboard.next().equals("y"));
+			break;
+		case 2:
+			System.out.println("Enter the user name ");
+			String editUserName = keyboard.next();
+			System.out.println("Enter the password");
+			String editUserpassword = keyboard.next();
+			editStudentData(editUserName, editUserpassword);
 			keyboard.close();
+			break;
+		case 3:
+			System.out.println("Enter the user name ");
+			String delUserName = keyboard.next();
+			System.out.println("Enter the password");
+			String delUserpassword = keyboard.next();
+			delStudentData(delUserName, delUserpassword);
 			break;
 		default:
 			invalidChoice(choice);
+		}// end of switch
+	} // end of method
 
+	private static void delStudentData(String delUserName, String delUserpassword) {
+		Scanner keyboard = new Scanner(System.in);
+		String fileName = "./StudentsID.txt";
+		File oldfileName = new File(fileName);
+		File tempFile = new File("./temp.txt");
+		File newFile = new File(fileName);
+		String getdataFromFile = readFromFile(oldfileName);
+		String[] line = getdataFromFile.split("\\r?\\n");
+		for (int i = 0; i < line.length; i++) {
+			int splitLocation = line[i].indexOf(",");
+			String stdUserName = line[i].substring(0, splitLocation);
+			String stdPassword = line[i].substring(splitLocation + 1);
+
+			if (delUserName.equals(stdUserName) && delUserpassword.equals(stdPassword)) {
+				continue;
+
+			} else {
+				writetoFile(tempFile, stdUserName, stdPassword);
+			}
 		}
+
+		oldfileName.delete();
+		tempFile.renameTo(newFile);
+		System.out.println("delete succefully!");
+		keyboard.close();
+
+	}
+
+	private static void editStudentData(String editUserName, String editUserpassword) {
+		Scanner keyboard = new Scanner(System.in);
+		String fileName = "./StudentsID.txt";
+		File oldfileName = new File(fileName);
+		File tempFile = new File("./temp.txt");
+		File newFile = new File(fileName);
+		String getdataFromFile = readFromFile(oldfileName);
+		String[] line = getdataFromFile.split("\\r?\\n");
+		for (int i = 0; i < line.length; i++) {
+			int splitLocation = line[i].indexOf(",");
+			String stdUserName = line[i].substring(0, splitLocation);
+			String stdPassword = line[i].substring(splitLocation + 1);
+
+			if (editUserName.equals(stdUserName) && editUserpassword.equals(stdPassword)) {
+				System.out.println("Enter the new user name");
+				String newUserName = keyboard.next();
+				System.out.println("Enter the new user password");
+				String newUserPassword = keyboard.next();
+				writetoFile(tempFile, newUserName, newUserPassword);
+
+			} else {
+				writetoFile(tempFile, stdUserName, stdPassword);
+			}
+		}
+
+		oldfileName.delete();
+		tempFile.renameTo(newFile);
+		System.out.println("upated!");
+		keyboard.close();
+
+	}
+
+	private static String readFromFile(File fileName) {
+		BufferedReader reader = null;
+		String line = null;
+		String appendLine = "";
+		try {
+			reader = new BufferedReader(new FileReader(fileName));
+			while ((line = reader.readLine()) != null) {
+				if (appendLine == "") {
+					appendLine = appendLine + line;
+				} else {
+					appendLine = appendLine + "\n" + line;
+				}
+
+			}
+
+		} catch (FileNotFoundException e) {
+			System.out.println("File is not found");
+		} catch (IOException e) {
+			System.out.println("Check Input/Output Please ");
+		} finally {
+
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					System.out.println("Check Input/Output Please");
+				}
+			}
+		}
+
+		return appendLine;
+	}
+
+	private static void writetoFile(File fileName, String UserName, String Userpassword) {
+		BufferedWriter writer = null;
+		try {
+			writer = new BufferedWriter(new FileWriter(fileName, true));
+			writer.write(UserName + "," + Userpassword);
+			writer.newLine();
+			writer.close();
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+
 	}
 }
