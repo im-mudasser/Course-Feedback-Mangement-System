@@ -1,0 +1,5 @@
+1.The course as a whole was: 1.Excellent 2.Good 3.Very Good 4.Poor 5.Very Poor
+2.The course content was: 1.Excellent 2.Good 3.Very Good 4.Poor 5.Very Poor
+3.Quality of questions or problems raised by the instructor was: 1.Excellent 2.Good 3.Very Good 4.Poor 5.Very Poor
+4.Relavence of course content was: 1.Excellent 2.Good 3.Very Good 4.Poor 5.Very Poor
+5.Grading techniques were: 1.Excellent 2.Good 3.Very Good 4.Poor 5.Very Poor

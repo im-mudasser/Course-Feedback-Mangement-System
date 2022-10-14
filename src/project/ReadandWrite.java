@@ -5,12 +5,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class ReadandWrite {
 
 	public static void main(String[] args) {
+		Scanner keyboard = new Scanner(System.in);
+		String filePath = "C:\\Users\\Mudasser Shahzad\\eclipse-workspace\\ICT-PROJECT\\Feedback-files\\";
+		File f = new File(filePath + "temp.txt");
+		File r = new File(filePath + "fuck.txt");
+		if (f.exists()) {
+			f.renameTo(r);
 
-		ReadandWrite.readFromFile(new File("StudentsID.txt"));
+		}
+
 	}
 
 	private static String readFromFile(File fileName) {
