@@ -10,8 +10,79 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class CourseFeedbackManagementSystem {
+	static String adminFeedbackFilesPath = ("C:\\Users\\Mudasser Shahzad\\eclipse-workspace\\ICT-PROJECT\\Feedback-files\\created-by-admin-files\\");
+	static String studentFeedbackFilesPath = ("C:\\Users\\Mudasser Shahzad\\eclipse-workspace\\ICT-PROJECT\\Feedback-files\\Student-feedback\\");
 
 	public static void main(String[] args) {
+		mainmenu();
+	}
+
+	private static void StudentfeedbackPanel(String inputStdUserName) {
+		Scanner keyboard = new Scanner(System.in);
+
+		System.out.println("Welcome" + inputStdUserName);
+		System.out.print("1.FeedBack Panel\t2.Logout");
+		System.out.println("\nEnter the choice");
+		String choice = keyboard.nextLine();
+		if (choice.equals("1")) {
+			studentFeedBackPanelMenu(inputStdUserName);
+		}
+
+		else if (choice.equals("2"))
+
+		{
+
+			mainmenu();
+
+		} else {
+			invalidChoice(choice);
+		}
+		keyboard.close();
+
+	}
+
+	private static void studentFeedBackPanelMenu(String inputStdUserName) {
+		Scanner keyboard = new Scanner(System.in);
+		System.out.println("\t\t\t\t\t b. Back to main menu");
+		File getAdminFeedbackFiles = new File(adminFeedbackFilesPath);
+		File[] listOfFiles = getAdminFeedbackFiles.listFiles();
+		for (int i = 0; i < listOfFiles.length; i++) {
+			System.out.println(i + 1 + "." + listOfFiles[i].getName().replace(".txt", ""));
+
+		}
+		System.out.println("To open a file kindly enter the choice");
+		String choice = keyboard.nextLine();
+		switch (choice) {
+		case "1":
+			File fileName = listOfFiles[0];
+			openFeedBack(fileName, inputStdUserName);
+
+			break;
+		case "2":
+			fileName = listOfFiles[1];
+			openFeedBack(fileName, inputStdUserName);
+			break;
+		case "3":
+			fileName = listOfFiles[2];
+			openFeedBack(fileName, inputStdUserName);
+			break;
+		case "4":
+			fileName = listOfFiles[3];
+			openFeedBack(fileName, inputStdUserName);
+			break;
+		case "b":
+			mainmenu();
+			break;
+		default:
+			invalidChoice(choice);
+			mainmenu();
+			break;
+
+		}
+		keyboard.close();
+	}
+
+	private static void mainmenu() {
 		Scanner keyboard = new Scanner(System.in);
 		String adminPassword = "123";
 		String adminUsername = "admin";
@@ -19,10 +90,10 @@ public class CourseFeedbackManagementSystem {
 		String mainmenu = "\t1.Admin\t2.Student";
 		System.out.println(mainmenu);
 
-		int choice = keyboard.nextInt();
+		String choice = keyboard.nextLine();
 
 		switch (choice) {
-		case 1:
+		case "1":
 
 			System.out.println("Enter username");
 			String username = keyboard.next();
@@ -36,13 +107,14 @@ public class CourseFeedbackManagementSystem {
 				System.out.println("Username is wrong");
 			}
 			break;
-		case 2:
+		case "2":
 			System.out.println("Enter your username");
 			String inputStdUserName = keyboard.next();
 			System.out.println("Enter password");
 			String inputStdPassword = keyboard.next();
 			if (loginValidation(inputStdUserName, inputStdPassword)) {
-				System.out.println("Welcome " + inputStdUserName);
+				StudentfeedbackPanel(inputStdUserName);
+
 			} else {
 				System.out.println("Sorry password and username doesnot match");
 			}
@@ -51,10 +123,84 @@ public class CourseFeedbackManagementSystem {
 
 		default:
 			invalidChoice(choice);
+			mainmenu();
 
 		}
 		keyboard.close();
 
+	}
+
+	private static void openFeedBack(File fileName, String inputStdUserName) {
+
+		File stdFeedBackFile = new File(studentFeedbackFilesPath + inputStdUserName + "-" + fileName.getName());
+		Scanner keyboard = new Scanner(System.in);
+		String getData = readFromFile(fileName);
+		String[] line = getData.split("\\r?\\n");
+		String questionData = null;
+		String answer = null;
+		String exitButton = "e.Exit";
+		System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t" + exitButton);
+		if (stdFeedBackFile.exists()) {
+			System.out.println("Already submitted the feedback for this course");
+		} else {
+			for (int i = 0; i < line.length; i++) {
+				System.out.println(line[i]);
+				int splitLocation = line[i].indexOf(":");
+				questionData = line[i].substring(0, splitLocation + 1);
+				String answers = line[i].substring(splitLocation + 2);
+				String[] splitanswers = answers.split(" +");
+
+				System.out.println("Enter the choice");
+				String choice = keyboard.nextLine();
+
+				if (choice.equals("1")) {
+					answer = splitanswers[0];
+					writetoFile(stdFeedBackFile, questionData + " " + answer);
+
+				} else if (choice.equals("2")) {
+					answer = splitanswers[1];
+					writetoFile(stdFeedBackFile, questionData + " " + answer);
+
+				} else if (choice.equals("3")) {
+					answer = splitanswers[2];
+					writetoFile(stdFeedBackFile, questionData + " " + answer);
+
+				} else if (choice.equals("4")) {
+					answer = splitanswers[3];
+					writetoFile(stdFeedBackFile, questionData + " " + answer);
+
+				} else if (choice.equals("5")) {
+					answer = splitanswers[4];
+					writetoFile(stdFeedBackFile, questionData + " " + answer);
+
+				} else {
+					invalidChoice(choice);
+
+				}
+
+			}
+			System.out.println("Enter the comment about this course");
+
+			String comment = keyboard.nextLine();
+
+			writetoFile(stdFeedBackFile, "Student Comment : " + " " + inputStdUserName + "\n" + comment);
+			System.out.println("Successfully submit! thanks");
+		}
+
+		while (true) {
+			System.out.println("Press e for exit ");
+			String choice = keyboard.nextLine();
+			if (choice.equals("e")) {
+				studentFeedBackPanelMenu(inputStdUserName);
+				break;
+
+			} else {
+				invalidChoice(choice);
+
+			}
+		}
+
+		keyboard.close();
 	}
 
 	private static boolean loginValidation(String inputStdUserName, String inputStdPassword) {
@@ -80,68 +226,80 @@ public class CourseFeedbackManagementSystem {
 
 	}
 
-	private static void invalidChoice(int choice) {
-		throw new IllegalArgumentException("Unexpected value: " + choice);
+	private static void invalidChoice(String choice) {
+		System.out.println("Unexpected value: " + choice);
 	}
 
 	private static void adminLogin(String adminUsername) {
 
 		Scanner keyboard = new Scanner(System.in);
-		System.out.println("Welcome " + adminUsername);
+		System.out.println("\t\t\tWelcome " + adminUsername);
+		System.out.println("\t\t\t\t\t\t\t\t 5.Logout");
 		System.out.println("1.Add Student");
 		System.out.println("2.Edit Students");
 		System.out.println("3.Delete Students");
 		System.out.println("4.Feedback");
-		int choice = keyboard.nextInt();
+		String choice = keyboard.nextLine();
 		switch (choice) {
-		case 1:
+		case "1":
 			do {
-				try {
-					BufferedWriter writer = new BufferedWriter(new FileWriter("./StudentsID.txt", true));
-					System.out.println("Enter the student-id");
-					String studentUserName = keyboard.next();
-					System.out.println("Enter the student password");
-					String studentPassword = keyboard.next();
-					writer.write(studentUserName + "," + studentPassword);
-					writer.newLine();
-					writer.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				System.out.println("Enter the student-id");
+				String studentUserName = keyboard.next();
+				System.out.println("Enter the student password");
+				String studentPassword = keyboard.next();
+				writetoFile(new File("./StudentsID.txt"), studentUserName, studentPassword);
+				System.out.println("Added successfully!!");
 				System.out.println("Do you want to enter more students y/n");
+				if (keyboard.next().equalsIgnoreCase("n")) {
+					adminLogin(adminUsername);
+				} else {
+					System.out.println("error");
+				}
 
+			} while (keyboard.nextLine().equalsIgnoreCase("y"));
+			break;
+		case "2":
+			do {
+				System.out.println("Enter the user name ");
+				String editUserName = keyboard.nextLine();
+				System.out.println("Enter the password");
+				String editUserpassword = keyboard.nextLine();
+				editStudentData(editUserName, editUserpassword);
+				System.out.println("Edited successfully!!");
+				keyboard.next();
+				System.out.println("Do you want to enter more students y/n");
+				if (keyboard.nextLine().equalsIgnoreCase("n")) {
+					adminLogin(adminUsername);
+					break;
+				}
+			} while (keyboard.nextLine().equalsIgnoreCase("y"));
+			break;
+		case "3":
+			do {
+				System.out.println("Enter the user name ");
+				String delUserName = keyboard.next();
+				System.out.println("Enter the password");
+				String delUserpassword = keyboard.next();
+				delStudentData(delUserName, delUserpassword);
+				System.out.println("Deleted Successfully!!");
+				System.out.println("Do you want to enter more students y/n");
+				if (keyboard.next().equals("n")) {
+					adminLogin(adminUsername);
+				}
 			} while (keyboard.next().equals("y"));
 			break;
-		case 2:
-			System.out.println("Enter the user name ");
-			String editUserName = keyboard.next();
-			System.out.println("Enter the password");
-			String editUserpassword = keyboard.next();
-			editStudentData(editUserName, editUserpassword);
-			keyboard.close();
-			break;
-		case 3:
-			System.out.println("Enter the user name ");
-			String delUserName = keyboard.next();
-			System.out.println("Enter the password");
-			String delUserpassword = keyboard.next();
-			delStudentData(delUserName, delUserpassword);
-			break;
-		case 4:
+		case "4":
 			String feedbackMenu = "1.Create Feedbaack\n2.Add Questions\n3.Edit Questions in feedback\n4.delete feedback ";
 			System.out.println(feedbackMenu);
 			System.out.println("Enter the choice");
-			choice = keyboard.nextInt();
-			keyboard.nextLine();
+			choice = keyboard.nextLine();
 			switch (choice) {
-			case 1:
-
+			case "1":
 				System.out.println("Enter the filename for ex : feedbackcourseName");
 				String fileName = keyboard.nextLine();
-				createFeedback(fileName);
+				createFeedback(new File(fileName));
 				break;
-			case 2:
+			case "2":
 				System.out.println("Enter the feedback file name to add the questions");
 				fileName = keyboard.nextLine();
 				do {
@@ -152,22 +310,22 @@ public class CourseFeedbackManagementSystem {
 				} while (keyboard.nextLine().equals("y"));
 				System.out.println("Questions has be added succesfully!");
 				break;
-			case 3:
+			case "3":
 				editFeedback();
 				break;
-			case 4:
+			case "4":
 				String deleteMenu = "1.Delete the entire feedback\n2.Delete the questions within the feedback";
 				System.out.println(deleteMenu);
 				System.out.println("Enter the choice");
-				choice = keyboard.nextInt();
+				choice = keyboard.nextLine();
 				switch (choice) {
-				case 1:
+				case "1":
 					keyboard.nextLine();
 					System.out.println("Enter the file name");
 					fileName = keyboard.nextLine();
 					deleteEntireFeedback(new File(fileName));
 					break;
-				case 2:
+				case "2":
 					deleteFeedbackQuestion();
 					break;
 				default:
@@ -175,14 +333,17 @@ public class CourseFeedbackManagementSystem {
 				}
 
 				break;
-
 			default:
 				invalidChoice(choice);
 			} // end of inner switch
 			break; // outer switch
+		case "5":
+			mainmenu();
+			break;
 		default:
 			invalidChoice(choice);
 		}// end of switch
+		keyboard.close();
 	} // end of method
 
 	private static void deleteEntireFeedback(File fileName) {
@@ -198,16 +359,15 @@ public class CourseFeedbackManagementSystem {
 
 	}
 
-	private static void createFeedback(String fileName) {
+	private static void createFeedback(File fileName) {
 
-		File feedBackFile = new File(
-				"C:\\Users\\Mudasser Shahzad\\eclipse-workspace\\ICT-PROJECT\\Feedback-files\\" + fileName + ".txt");
+		File feedBackFile = new File(adminFeedbackFilesPath + fileName + ".txt");
 		try {
 			if (feedBackFile.createNewFile())
-				System.out.println("File created successfully!" + feedBackFile.getName());
+				System.out.println("File created successfully! " + feedBackFile.getName());
 			else
 
-				System.out.println(fileName + "File already exist");
+				System.out.println("File already exist " + feedBackFile.getName());
 
 		}
 
@@ -269,11 +429,10 @@ public class CourseFeedbackManagementSystem {
 				writetoFile(tempFile, stdUserName, stdPassword);
 			}
 		}
+		keyboard.close();
 
 		oldfileName.delete();
 		tempFile.renameTo(newFile);
-		System.out.println("upated!");
-		keyboard.close();
 
 	}
 
@@ -421,4 +580,12 @@ public class CourseFeedbackManagementSystem {
 		keyboard.close();
 	}
 
+	// clear console method
+
+	private static void clearConsole() {
+
+		for (int i = 0; i < 100; i++) {
+			System.out.println("");
+		}
+	}
 }
