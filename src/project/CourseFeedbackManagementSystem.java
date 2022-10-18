@@ -317,7 +317,7 @@ public class CourseFeedbackManagementSystem {
 			break;
 		case "4":
 			clearConsole();
-			feedbackPanel(adminUsername);
+			feedbackPanel();
 			break;
 		case "5":
 			clearConsole();
@@ -338,6 +338,12 @@ public class CourseFeedbackManagementSystem {
 		int countVeryPoor = 0;
 		int countPoor = 0;
 		String getDataFromFile = readFromFile(fileName);
+		if (getDataFromFile == null) {
+			System.out.println("Enter the correct File name");
+			feedbackPanel();
+			System.exit(0);
+
+		}
 		String line[] = getDataFromFile.split("\\r?\\n");
 		for (int i = 0; i < line.length; i++) {
 			int splitLocation = line[i].indexOf(":");
@@ -365,9 +371,16 @@ public class CourseFeedbackManagementSystem {
 	}
 
 	private static void search(File fileName) {
+		String getDataFromFile = readFromFile(fileName);
+		if (getDataFromFile == null) {
+			System.out.println("Enter the correct File name");
+			feedbackPanel();
+			System.exit(0);
+
+		}
 		System.out.println("Enter the search term");
 		String searchTerm = keyboard.nextLine();
-		String getDataFromFile = readFromFile(fileName);
+
 		String data = getDataFromFile.replaceAll("\\d\\.", "");
 		int count = 0;
 		String line[] = data.split("\\r?\\n");
@@ -390,7 +403,7 @@ public class CourseFeedbackManagementSystem {
 
 	}
 
-	private static void feedbackPanel(String adminUsername) {
+	private static void feedbackPanel() {
 		String feedbackMenu = "1.Create Feedbaack\t2.Add Questions\t3.Edit Questions in feedback\t4.delete feedback\t5.view how many students "
 				+ "gives feedback\t6.Calculate the percentage\t7.Search\tb.Back\n";
 
@@ -408,7 +421,7 @@ public class CourseFeedbackManagementSystem {
 				if (choice.equalsIgnoreCase("y")) {
 					continue;
 				} else {
-					feedbackPanel(adminUsername);
+					feedbackPanel();
 					break;
 				}
 			}
@@ -428,7 +441,7 @@ public class CourseFeedbackManagementSystem {
 				if (choice.equalsIgnoreCase("y")) {
 					continue;
 				} else {
-					feedbackPanel(adminUsername);
+					feedbackPanel();
 					break;
 				}
 			}
@@ -436,7 +449,7 @@ public class CourseFeedbackManagementSystem {
 			break;
 		case "3":
 			while (true) {
-				System.out.print("Enter the feedback file name to edit the questions");
+				System.out.println("Enter the feedback file name to edit the questions");
 				fileName = keyboard.nextLine();
 				System.out.println(adminFeedbackFilesPath + fileName + ".txt");
 				if (editFeedback(new File(adminFeedbackFilesPath + fileName + ".txt"))) {
@@ -446,7 +459,7 @@ public class CourseFeedbackManagementSystem {
 					if (choice.equalsIgnoreCase("y")) {
 						continue;
 					} else {
-						feedbackPanel(adminUsername);
+						feedbackPanel();
 						break;
 					}
 
@@ -458,7 +471,7 @@ public class CourseFeedbackManagementSystem {
 
 			break;
 		case "4":
-			deleteFeedbackPanel(adminUsername);
+			deleteFeedbackPanel();
 			break;
 		case "5":
 			System.out.println("Student are  : ");
@@ -467,7 +480,7 @@ public class CourseFeedbackManagementSystem {
 			for (int i = 0; i < listOfFiles.length; i++) {
 				System.out.println(listOfFiles[i].getName().replace(".txt", ""));
 			}
-			feedbackPanel(adminUsername);
+			feedbackPanel();
 			break;
 		case "6":
 			while (true) {
@@ -479,7 +492,7 @@ public class CourseFeedbackManagementSystem {
 					continue;
 				} else {
 					clearConsole();
-					feedbackPanel(adminUsername);
+					feedbackPanel();
 					break;
 				}
 			}
@@ -496,23 +509,23 @@ public class CourseFeedbackManagementSystem {
 					continue;
 				} else {
 					clearConsole();
-					feedbackPanel(adminUsername);
+					feedbackPanel();
 					break;
 				}
 			}
 			break;
 		case "b":
 			clearConsole();
-			adminLogin(adminUsername);
+			adminLogin("admin");
 			break;
 		default:
 			clearConsole();
 			invalidChoice(choice);
-			feedbackPanel(adminUsername);
+			feedbackPanel();
 		}
 	}
 
-	private static void deleteFeedbackPanel(String adminUsername) {
+	private static void deleteFeedbackPanel() {
 		String deleteMenu = "1.Delete the entire feedback\t2.Delete the questions within the feedback";
 		System.out.print(deleteMenu);
 		System.out.print("\t\t\t\t b.Back\n");
@@ -530,7 +543,7 @@ public class CourseFeedbackManagementSystem {
 				if (choice.equalsIgnoreCase("y")) {
 					continue;
 				} else {
-					deleteFeedbackPanel(adminUsername);
+					deleteFeedbackPanel();
 					break;
 				}
 			}
@@ -546,7 +559,7 @@ public class CourseFeedbackManagementSystem {
 				if (choice.equalsIgnoreCase("y")) {
 					continue;
 				} else {
-					deleteFeedbackPanel(adminUsername);
+					deleteFeedbackPanel();
 					break;
 				}
 
@@ -554,12 +567,12 @@ public class CourseFeedbackManagementSystem {
 			break;
 		case "b":
 			clearConsole();
-			feedbackPanel(adminUsername);
+			feedbackPanel();
 			break;
 		default:
 			clearConsole();
 			invalidChoice(choice);
-			deleteFeedbackPanel(adminUsername);
+			deleteFeedbackPanel();
 		}
 
 	}
@@ -572,7 +585,9 @@ public class CourseFeedbackManagementSystem {
 			file.delete();
 			System.out.println("Successfully deleted!");
 		} else {
-			System.out.println("File could not be deleted!");
+			clearConsole();
+			System.out.println(" Not file found ! ");
+			deleteFeedbackPanel();
 		}
 
 	}
@@ -673,6 +688,7 @@ public class CourseFeedbackManagementSystem {
 
 		} catch (FileNotFoundException e) {
 			System.out.println("File is not found");
+			appendLine = null;
 		} catch (IOException e) {
 			System.out.println("Check Input/Output Please ");
 		} finally {
@@ -707,6 +723,12 @@ public class CourseFeedbackManagementSystem {
 		File tempFile = new File(adminFeedbackFilesPath + "temp.txt");
 		File oldFile = deleteFileName;
 		String getdataFromFile = readFromFile(oldFile);
+		if (getdataFromFile == null) {
+			System.out.println("Enter the correct File name");
+			feedbackPanel();
+			System.exit(0);
+
+		}
 		System.out.println(getdataFromFile);
 		System.out.println("Which Question do you want to delete");
 		String deleteQuestion = keyboard.nextLine();
@@ -755,6 +777,12 @@ public class CourseFeedbackManagementSystem {
 		File oldFile = editFileName;
 		System.out.println("old file is " + editFileName);
 		String getdataFromFile = readFromFile(oldFile);
+		if (getdataFromFile == null) {
+			System.out.println("Enter the correct File name");
+			feedbackPanel();
+			System.exit(0);
+
+		}
 		System.out.println(getdataFromFile);
 		System.out.println("Which Question do you want to edit");
 		String editQuestion = keyboard.nextLine();
