@@ -26,5 +26,5 @@ The admin panel have following access.
     * Grading techniques were: 1.Excellent 2.Good 3.VeryGood 4.Poor 5.VeryPoor
     * Quality of questions or problems raised by the instructor was: 1.Excellent 2.Good 3.VeryGood                                                                  4.Poor 5.VeryPoor
     * After entering the questions student should be able to add the comment.The file of each feedback will be stored with the student username and the course file name.
-* One Feedback For One Course: Student was enforce to enter one feedback for each course.if a student already submiited the feedback for a course it throw an exception "already submitted the feeback..
+* One Feedback For One Course: Student was enforce to enter one feedback for each course.if a student already submiited the feedback for a course it throw an exception "already submitted the feeback".
 * Logout: The student has an option to logout from the system.
