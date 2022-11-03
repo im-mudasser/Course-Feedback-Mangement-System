@@ -1,5 +1,4 @@
 # Course-Feedback-Mangement-System #
-# Course-Feedback-Mangement-System #
 This project was related to course feedback management system . The aim of this project was to get the reviews of students about courses and the teachers of that courses.
 In this project there is a admin panel and student panel 
 ## Admin panel ##
